@@ -58,7 +58,7 @@ def flow_new_invoice(conn):
             client_id = None
             break
 
-    # 2) date: let user type or use today
+    #date: let user type or use today
     issue_date = input("Issue date [YYYY-MM-DD] (enter for today): ").strip()
     if not issue_date:
         from datetime import date
@@ -67,8 +67,25 @@ def flow_new_invoice(conn):
     number, invoice_id = create_invoice_header(conn, client_id, issue_date)
     print(f"Created invoice {number} (id={invoice_id}).")
 
-    # 3) then go to add items…
-    add_items_loop(conn, invoice_id)
+    def print_total(total):
+        irpf = total * 0.15
+        iva = total * 0.21
+        print(f"Total =  {total - iva + irpf} Iva = {iva} Irpf = {irpf}")
+
+    def add_items_loop():
+        items = []
+        total = irpf = iva = 0
+        while True:
+            description = input("Enter description (or done if finished): ")
+            if description.lower() == "done":
+                break
+            quantity = (int(input("Enter amount: " )))
+            price = (float(input("Enter price per unit: ")))
+            total += quantity * price
+            print_total(total)
+            items.append({"description" : description, "quantity" : quantity, "price" : price })
+        return items
+
     # 4) compute totals and persist (C4)
-    compute_totals(conn, invoice_id)
+    #compute_totals(conn, invoice_id)
     # 5) offer to export PDF (C5)
